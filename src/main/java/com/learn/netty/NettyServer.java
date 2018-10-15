@@ -1,11 +1,14 @@
 package com.learn.netty;
 
 import com.learn.netty.init.AntelopeInitializer;
+import com.learn.netty.util.LoggerBuilder;
+import com.learn.netty.util.ThreadLocalHolder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.slf4j.Logger;
 
 /**
  * @Author :lwy
@@ -13,6 +16,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * @Description :
  */
 public class NettyServer {
+
+    private static final Logger logger = LoggerBuilder.getLogger(NettyServer.class);
 
 
     private static NioEventLoopGroup boss = new NioEventLoopGroup();
@@ -31,7 +36,7 @@ public class NettyServer {
 
             ChannelFuture channelFuture = bootstrap.bind(8080).sync();
             if (channelFuture.isSuccess()) {
-                //TODO 开启日志
+                appLog();
             }
             Channel channel = channelFuture.channel();
             channel.closeFuture().sync();
@@ -39,5 +44,11 @@ public class NettyServer {
             boss.shutdownGracefully();
             worker.shutdownGracefully();
         }
+    }
+
+    private static void appLog() {
+        long startTime = ThreadLocalHolder.getLocalTime();
+        long end = System.currentTimeMillis();
+        logger.info("Cicada started cost {}ms", end - startTime);
     }
 }
