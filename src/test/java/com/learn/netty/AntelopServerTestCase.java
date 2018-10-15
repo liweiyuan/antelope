@@ -1,6 +1,6 @@
 package com.learn.netty;
 
-import com.learn.AntelopServer;
+import com.learn.AntelopeServer;
 
 /**
  * @Author :lwy
@@ -12,6 +12,6 @@ public class AntelopServerTestCase {
 
     public static void main(String[] args) throws InterruptedException {
 
-        AntelopServer.start(AntelopServerTestCase.class,"/");
+        AntelopeServer.start(AntelopServerTestCase.class,"/");
     }
 }

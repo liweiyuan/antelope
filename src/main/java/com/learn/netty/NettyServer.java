@@ -1,6 +1,6 @@
 package com.learn.netty;
 
-import com.learn.netty.init.AntelopInitializer;
+import com.learn.netty.init.AntelopeInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -27,7 +27,7 @@ public class NettyServer {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(boss, worker)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(new AntelopInitializer());
+                    .childHandler(new AntelopeInitializer());
 
             ChannelFuture channelFuture = bootstrap.bind(8080).sync();
             if (channelFuture.isSuccess()) {

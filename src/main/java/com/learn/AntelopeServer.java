@@ -7,7 +7,7 @@ import com.learn.netty.NettyServer;
  * @Date : 2018/10/12 18:18
  * @Description :
  */
-public class AntelopServer {
+public class AntelopeServer {
 
     /**
      * 启动类

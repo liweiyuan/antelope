@@ -9,7 +9,7 @@ import io.netty.handler.codec.http.*;
  * @Date : 2018/10/15 15:34
  * @Description :
  */
-public class HttpExecueHandler extends SimpleChannelInboundHandler<DefaultHttpRequest> {
+public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpRequest> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DefaultHttpRequest msg) throws Exception {
         System.out.println(msg);
