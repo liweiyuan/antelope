@@ -1,9 +1,17 @@
 package com.learn.netty.config;
 
+import com.learn.AntelopeServer;
+import com.learn.netty.NettyServer;
+import com.learn.netty.configuration.AbstractAntelopeConfiguration;
+import com.learn.netty.configuration.ConfigurationHolder;
 import com.learn.netty.util.ClassScanner;
+import com.learn.netty.util.LoggerBuilder;
 import com.learn.netty.util.ThreadLocalHolder;
+import org.slf4j.Logger;
 
+import java.io.*;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @Author :lwy
@@ -11,6 +19,8 @@ import java.util.List;
  * @Description :
  */
 public class AntelopeSetting {
+
+    private static final Logger logger = LoggerBuilder.getLogger(AntelopeSetting.class);
 
     /**
      * 资源初始化
@@ -33,8 +43,35 @@ public class AntelopeSetting {
         //设置扫描包路径
         AppConfig.newInstance().setRootPackageName(clzz.getPackage().getName());
         //扫描Class
-        List<Class<?>> configurations=ClassScanner.configurations(AppConfig.newInstance().getRootPackageName());
+        List<Class<?>> configurations = ClassScanner.configurations(AppConfig.newInstance().getRootPackageName());
         //初始化基于注解的action与拦截器处理
         ClassScanner.initAnnotation();
+        configurations.forEach(configurationClass -> {
+            try {
+                AbstractAntelopeConfiguration configuration = (AbstractAntelopeConfiguration) configurationClass.newInstance();
+                //read
+                InputStream stream;
+
+                String systemProperty = System.getProperty(configuration.getPropertiesName());
+                if (systemProperty != null) {
+                    stream = new FileInputStream(new File(systemProperty));
+                } else {
+                    stream = AntelopeServer.class.getClassLoader().getResourceAsStream(configuration.getPropertiesName());
+                }
+                Properties properties=new Properties();
+                properties.load(stream);
+
+                configuration.setProperties(properties);
+
+                ConfigurationHolder.addConfiguration(configurationClass.getName(),configuration);
+
+            } catch (InstantiationException | IllegalAccessException e) {
+                logger.error("create new class failed.", e);
+            } catch (FileNotFoundException e) {
+                logger.error("FileNotFoundException", e);
+            } catch (IOException e) {
+                logger.error("IOException", e);
+            }
+        });
     }
 }

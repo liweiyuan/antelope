@@ -3,6 +3,7 @@ package com.learn.netty.util;
 import com.learn.netty.annotation.AntelopeAction;
 import com.learn.netty.annotation.AntelopeInterceptor;
 import com.learn.netty.configuration.AbstractAntelopeConfiguration;
+import com.learn.netty.configuration.ApplicationConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
@@ -15,6 +16,7 @@ import java.net.URLDecoder;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 /**
  * @Author :lwy
@@ -45,8 +47,10 @@ public class ClassScanner {
     public static List<Class<?>> configurations(String rootPackageName) {
         if (configurationList == null) {
             getClasses(rootPackageName);
-            //TODO 添加系统配置
+
             configurationList = new ArrayList<>(16);
+
+            configurationList.add(ApplicationConfiguration.class);
 
             classes.forEach(scanClass -> {
                 if (scanClass.getSuperclass() != AbstractAntelopeConfiguration.class) {
@@ -55,7 +59,7 @@ public class ClassScanner {
                 configurationList.add(scanClass);
             });
         }
-        return configurationList;
+        return configurationList.stream().distinct().collect(Collectors.toList());
     }
 
     /**
