@@ -11,14 +11,21 @@ import com.learn.netty.config.AntelopeSetting;
 public class AntelopeServer {
 
 
-
     /**
      * 启动类
      */
     public static void start(Class<?> clzz, String scanRootPath) throws InterruptedException {
-        //TODO 1.资源初始化
         AntelopeSetting.setting(clzz,scanRootPath);
-        //TODO 2.启动netty服务器
+        NettyServer.start();
+    }
+
+    /**
+     * 启动类
+     * @param clzz
+     * @throws InterruptedException
+     */
+    public static void start(Class<?> clzz) throws InterruptedException {
+        AntelopeSetting.setting(clzz,"/");
         NettyServer.start();
     }
 }

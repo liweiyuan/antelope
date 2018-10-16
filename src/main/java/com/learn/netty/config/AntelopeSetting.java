@@ -1,6 +1,9 @@
 package com.learn.netty.config;
 
+import com.learn.netty.util.ClassScanner;
 import com.learn.netty.util.ThreadLocalHolder;
+
+import java.util.List;
 
 /**
  * @Author :lwy
@@ -25,8 +28,13 @@ public class AntelopeSetting {
      * @param clzz
      */
     private static void initializeConfig(Class<?> clzz) {
-
         //初始化开始时间
         ThreadLocalHolder.setLocalTime(System.currentTimeMillis());
+        //设置扫描包路径
+        AppConfig.newInstance().setRootPackageName(clzz.getPackage().getName());
+        //扫描Class
+        List<Class<?>> configurations=ClassScanner.configurations(AppConfig.newInstance().getRootPackageName());
+        //初始化基于注解的action与拦截器处理
+        ClassScanner.initAnnotation();
     }
 }

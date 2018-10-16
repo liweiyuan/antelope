@@ -1,5 +1,6 @@
 package com.learn.netty;
 
+import com.learn.netty.config.AppConfig;
 import com.learn.netty.init.AntelopeInitializer;
 import com.learn.netty.util.LoggerBuilder;
 import com.learn.netty.util.ThreadLocalHolder;
@@ -34,7 +35,7 @@ public class NettyServer {
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new AntelopeInitializer());
 
-            ChannelFuture channelFuture = bootstrap.bind(8080).sync();
+            ChannelFuture channelFuture = bootstrap.bind(AppConfig.newInstance().getPort()).sync();
             if (channelFuture.isSuccess()) {
                 appLog();
             }
@@ -49,6 +50,6 @@ public class NettyServer {
     private static void appLog() {
         long startTime = ThreadLocalHolder.getLocalTime();
         long end = System.currentTimeMillis();
-        logger.info("Cicada started cost {}ms", end - startTime);
+        logger.info("Cicada started the listen port is {}, cost {}ms", AppConfig.newInstance().getPort(), end - startTime);
     }
 }
