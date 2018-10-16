@@ -3,7 +3,9 @@ package com.learn.netty.config;
 import com.learn.AntelopeServer;
 import com.learn.netty.NettyServer;
 import com.learn.netty.configuration.AbstractAntelopeConfiguration;
+import com.learn.netty.configuration.ApplicationConfiguration;
 import com.learn.netty.configuration.ConfigurationHolder;
+import com.learn.netty.constant.AntelopeConstant;
 import com.learn.netty.util.ClassScanner;
 import com.learn.netty.util.LoggerBuilder;
 import com.learn.netty.util.ThreadLocalHolder;
@@ -12,6 +14,8 @@ import org.slf4j.Logger;
 import java.io.*;
 import java.util.List;
 import java.util.Properties;
+
+import static com.learn.netty.configuration.ConfigurationHolder.getConfiguration;
 
 /**
  * @Author :lwy
@@ -30,6 +34,25 @@ public class AntelopeSetting {
      */
     public static void setting(Class<?> clzz, String scanRootPath) {
         initializeConfig(clzz);
+        setAppConfig(scanRootPath);
+    }
+
+    private static void setAppConfig(String scanRootPath) {
+        ApplicationConfiguration applicationConfiguration = (ApplicationConfiguration) getConfiguration(ApplicationConfiguration.class);
+
+        if (scanRootPath == null) {
+            scanRootPath = applicationConfiguration.get(AntelopeConstant.ROOT_PATH);
+        }
+        String port = applicationConfiguration.get(AntelopeConstant.ANTELOPE_PORT);
+
+        if (scanRootPath == null) {
+            throw new RuntimeException("No [cicada.root.path] exists ");
+        }
+        if (port == null) {
+            throw new RuntimeException("No [cicada.port] exists ");
+        }
+        AppConfig.newInstance().setRootPath(scanRootPath);
+        AppConfig.newInstance().setPort(Integer.parseInt(port));
     }
 
     /**

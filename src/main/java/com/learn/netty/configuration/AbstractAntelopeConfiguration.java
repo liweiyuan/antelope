@@ -31,4 +31,8 @@ public abstract class AbstractAntelopeConfiguration {
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
+
+    public String get(String key) {
+        return properties.get(key) == null ? null : properties.get(key).toString();
+    }
 }
