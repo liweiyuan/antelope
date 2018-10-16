@@ -1,6 +1,5 @@
 package com.learn.netty.util;
 
-import com.google.common.base.Strings;
 import com.learn.netty.annotation.AntelopeAction;
 import com.learn.netty.annotation.AntelopeInterceptor;
 import com.learn.netty.configuration.AbstractAntelopeConfiguration;
@@ -155,17 +154,16 @@ public class ClassScanner {
         classes.forEach(scanClass -> {
             if (scanClass.getAnnotation(AntelopeAction.class) != null ||
                     scanClass.getAnnotation(AntelopeInterceptor.class) != null) {
-                return;
-            }
-            Annotation[] annotations = scanClass.getAnnotations();
-            for (Annotation annotation : annotations) {
-                if (annotation instanceof AntelopeAction) {
-                    AntelopeAction antelopeAction = (AntelopeAction) annotation;
-                    actionMap.put(StringUtils.isEmpty(antelopeAction.value()) ? scanClass.getName() : antelopeAction.value(), scanClass);
-                }
-                if (annotation instanceof AntelopeInterceptor) {
-                    AntelopeInterceptor antelopeInterceptor = (AntelopeInterceptor) annotation;
-                    interceptorMap.put(StringUtils.isEmpty(antelopeInterceptor.value()) ? scanClass.getName() : antelopeInterceptor.value(), scanClass);
+                Annotation[] annotations = scanClass.getAnnotations();
+                for (Annotation annotation : annotations) {
+                    if (annotation instanceof AntelopeAction) {
+                        AntelopeAction antelopeAction = (AntelopeAction) annotation;
+                        actionMap.put(StringUtils.isEmpty(antelopeAction.value()) ? scanClass.getName() : antelopeAction.value(), scanClass);
+                    }
+                    if (annotation instanceof AntelopeInterceptor) {
+                        AntelopeInterceptor antelopeInterceptor = (AntelopeInterceptor) annotation;
+                        interceptorMap.put(StringUtils.isEmpty(antelopeInterceptor.value()) ? scanClass.getName() : antelopeInterceptor.value(), scanClass);
+                    }
                 }
             }
         });
