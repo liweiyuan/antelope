@@ -1,11 +1,9 @@
 package com.learn.netty.init;
 
 import com.learn.netty.codec.SelfHttpResponseEncoder;
-import com.learn.netty.handler.OtherMessageHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
