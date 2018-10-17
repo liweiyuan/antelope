@@ -4,6 +4,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 import static com.learn.netty.handler.HttpExecuteHandler.INSTANCE;
 
@@ -18,6 +20,7 @@ public class AntelopeInitializer extends ChannelInitializer<NioSocketChannel> {
         ch.pipeline()
                 .addLast(new HttpRequestDecoder())
                 .addLast(new HttpResponseEncoder())
-                .addLast(INSTANCE);
+                .addLast(INSTANCE)
+                .addLast("logger", new LoggingHandler(LogLevel.INFO));
     }
 }
