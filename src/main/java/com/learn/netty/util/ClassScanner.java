@@ -50,7 +50,7 @@ public class ClassScanner {
 
             configurationList = new ArrayList<>(16);
 
-            configurationList.add(ApplicationConfiguration.class);
+            classes.add(ApplicationConfiguration.class);
 
             classes.forEach(scanClass -> {
                 if (scanClass.getSuperclass() != AbstractAntelopeConfiguration.class) {
@@ -59,7 +59,7 @@ public class ClassScanner {
                 configurationList.add(scanClass);
             });
         }
-        return configurationList.stream().distinct().collect(Collectors.toList());
+        return configurationList;
     }
 
     /**

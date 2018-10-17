@@ -1,5 +1,6 @@
 package com.learn.netty.handler;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
@@ -9,7 +10,11 @@ import io.netty.handler.codec.http.*;
  * @Date : 2018/10/15 15:34
  * @Description :
  */
+@ChannelHandler.Sharable
 public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpRequest> {
+
+    public static HttpExecuteHandler INSTANCE=new HttpExecuteHandler();
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DefaultHttpRequest msg) throws Exception {
         System.out.println(msg);

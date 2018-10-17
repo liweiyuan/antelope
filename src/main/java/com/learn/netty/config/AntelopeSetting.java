@@ -1,7 +1,6 @@
 package com.learn.netty.config;
 
 import com.learn.AntelopeServer;
-import com.learn.netty.NettyServer;
 import com.learn.netty.configuration.AbstractAntelopeConfiguration;
 import com.learn.netty.configuration.ApplicationConfiguration;
 import com.learn.netty.configuration.ConfigurationHolder;

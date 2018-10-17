@@ -1,10 +1,11 @@
 package com.learn.netty.init;
 
-import com.learn.netty.handler.HttpExecuteHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+
+import static com.learn.netty.handler.HttpExecuteHandler.INSTANCE;
 
 /**
  * @Author :lwy
@@ -17,6 +18,6 @@ public class AntelopeInitializer extends ChannelInitializer<NioSocketChannel> {
         ch.pipeline()
                 .addLast(new HttpRequestDecoder())
                 .addLast(new HttpResponseEncoder())
-                .addLast(new HttpExecuteHandler());
+                .addLast(INSTANCE);
     }
 }
