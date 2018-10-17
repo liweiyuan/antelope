@@ -20,7 +20,7 @@ public class AntelopeHttpResponse implements AntelopeResponse {
 
     public static AntelopeResponse initResponse() {
         AntelopeResponse response = new AntelopeHttpResponse();
-        response.setContentType(AntelopeConstant.ContentType.JSON);
+        response.setContentType(AntelopeConstant.ContentType.TEXT);
         return response;
     }
 

@@ -14,6 +14,11 @@ public class AntelopeInteceptorTestCase extends AbstractAntelopeInterceptorAdapt
 
     @Override
     public void before(Param param) {
-        System.err.println("hello");
+        System.err.println("hello before");
+    }
+
+    @Override
+    public void after(Param param) {
+        System.err.println("hello after");
     }
 }
