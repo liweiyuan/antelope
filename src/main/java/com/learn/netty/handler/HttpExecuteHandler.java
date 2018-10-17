@@ -7,6 +7,7 @@ import com.learn.netty.action.res.AntelopeResponse;
 import com.learn.netty.config.AppConfig;
 import com.learn.netty.enums.StatusType;
 import com.learn.netty.exception.AntelopeException;
+import com.learn.netty.util.ClassScanner;
 import com.learn.netty.util.PathUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,9 +38,12 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
         //4.请求uri
         String uri = request.getUrl();
         //5.构建请求解码器
-        QueryStringDecoder queryStringDecoder=new QueryStringDecoder(uri);
+        QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri);
         //6.获取配置的系统参数
-        AppConfig config=checkAndget(uri,queryStringDecoder);
+        AppConfig config = checkAndGet(uri, queryStringDecoder);
+        //7.获取action
+        Class<?> actionClass = routeAction(queryStringDecoder);
+        //8.获取parameter
 
         //写出消息
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
@@ -48,16 +52,32 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
     }
 
     /**
+     * 获取Action
+     *
+     * @param queryStringDecoder
+     * @return
+     */
+    private Class<?> routeAction(QueryStringDecoder queryStringDecoder) {
+        String actionPath = PathUtil.getActionPath(queryStringDecoder.path());
+        Class<?> actionClass = ClassScanner.getActionClass(actionPath);
+        if (actionClass == null) {
+            throw new AntelopeException(StatusType.REQUEST_ERROR, "actionClass is not found.");
+        }
+        return actionClass;
+    }
+
+    /**
      * 获取系统参数
+     *
      * @param uri
      * @param queryStringDecoder
      * @return
      */
-    private AppConfig checkAndget(String uri, QueryStringDecoder queryStringDecoder) {
+    private AppConfig checkAndGet(String uri, QueryStringDecoder queryStringDecoder) {
 
-        AppConfig config=AppConfig.newInstance();
-        if(!PathUtil.getRootPath(queryStringDecoder.path()).equals(config.getRootPath())){
-            throw new AntelopeException(StatusType.REQUEST_ERROR,uri);
+        AppConfig config = AppConfig.newInstance();
+        if (!PathUtil.getRootPath(queryStringDecoder.path()).equals(config.getRootPath())) {
+            throw new AntelopeException(StatusType.REQUEST_ERROR, uri);
         }
         return config;
     }

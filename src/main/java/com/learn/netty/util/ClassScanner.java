@@ -16,7 +16,6 @@ import java.net.URLDecoder;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 
 /**
  * @Author :lwy
@@ -162,14 +161,24 @@ public class ClassScanner {
                 for (Annotation annotation : annotations) {
                     if (annotation instanceof AntelopeAction) {
                         AntelopeAction antelopeAction = (AntelopeAction) annotation;
-                        actionMap.put(StringUtils.isEmpty(antelopeAction.value()) ? scanClass.getName() : antelopeAction.value(), scanClass);
+                        actionMap.put(antelopeAction.value(), scanClass);
                     }
                     if (annotation instanceof AntelopeInterceptor) {
                         AntelopeInterceptor antelopeInterceptor = (AntelopeInterceptor) annotation;
-                        interceptorMap.put(StringUtils.isEmpty(antelopeInterceptor.value()) ? scanClass.getName() : antelopeInterceptor.value(), scanClass);
+                        interceptorMap.put(antelopeInterceptor.value(), scanClass);
                     }
                 }
             }
         });
+    }
+
+    /**
+     * 获取Action
+     *
+     * @param actionPath
+     * @return
+     */
+    public static Class<?> getActionClass(String actionPath) {
+        return actionMap.get(actionPath);
     }
 }

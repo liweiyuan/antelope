@@ -23,6 +23,6 @@ public class PathUtil {
      * @return
      */
     public static String getActionPath(String path){
-        return "/"+path.split("/")[1];
+        return path.split("/")[1];
     }
 }

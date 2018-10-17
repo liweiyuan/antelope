@@ -8,7 +8,7 @@ import com.learn.netty.annotation.AntelopeAction;
  * @Date : 2018/10/15 15:37
  * @Description :
  */
-@AntelopeAction
+@AntelopeAction(value = "hello")
 public class AntelopeServerTestCase {
 
 
