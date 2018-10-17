@@ -4,7 +4,6 @@ import com.learn.netty.annotation.AntelopeAction;
 import com.learn.netty.annotation.AntelopeInterceptor;
 import com.learn.netty.configuration.AbstractAntelopeConfiguration;
 import com.learn.netty.configuration.ApplicationConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -180,5 +179,14 @@ public class ClassScanner {
      */
     public static Class<?> getActionClass(String actionPath) {
         return actionMap.get(actionPath);
+    }
+
+    /**
+     * 获取拦截器
+     * @param
+     * @return
+     */
+    public static Map<String, Class<?>> getInteceptorMap(){
+        return interceptorMap;
     }
 }

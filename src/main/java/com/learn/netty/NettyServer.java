@@ -21,7 +21,7 @@ public class NettyServer {
     private static final Logger logger = LoggerBuilder.getLogger(NettyServer.class);
 
 
-    private static NioEventLoopGroup boss = new NioEventLoopGroup();
+    private static NioEventLoopGroup boss = new NioEventLoopGroup(1);
     private static NioEventLoopGroup worker = new NioEventLoopGroup();
 
     /**
@@ -50,6 +50,6 @@ public class NettyServer {
     private static void appLog() {
         long startTime = ThreadLocalHolder.getLocalTime();
         long end = System.currentTimeMillis();
-        logger.info("Cicada started the listen port is {}, cost {}ms", AppConfig.newInstance().getPort(), end - startTime);
+        logger.info("Antelope started the listen port is {}, cost {}ms", AppConfig.newInstance().getPort(), end - startTime);
     }
 }
