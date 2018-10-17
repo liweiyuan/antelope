@@ -1,5 +1,6 @@
 package com.learn.netty.init;
 
+import com.learn.netty.codec.SelfHttpResponseEncoder;
 import com.learn.netty.handler.OtherMessageHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -20,9 +21,9 @@ public class AntelopeInitializer extends ChannelInitializer<NioSocketChannel> {
     protected void initChannel(NioSocketChannel ch) throws Exception {
         ch.pipeline()
                 .addLast(new HttpRequestDecoder())
-                .addLast(new HttpResponseEncoder())
+                .addLast(new SelfHttpResponseEncoder())
                 .addLast(INSTANCE)
-                .addLast(new OtherMessageHandler())
-                .addLast("logger", new LoggingHandler(LogLevel.INFO));
+                .addLast("logger", new LoggingHandler(LogLevel.INFO))
+                /*.addLast(new OtherMessageHandler())*/;
     }
 }

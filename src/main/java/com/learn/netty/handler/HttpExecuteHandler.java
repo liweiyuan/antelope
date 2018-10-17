@@ -49,35 +49,57 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
 
         //1.请求处理
         AntelopeRequest request = AntelopeHttpRequest.initRequest(msg);
-        //2.初始化响应体
-        AntelopeResponse antelopeResponse = AntelopeHttpResponse.initResponse();
 
-        //3.请求上下文
-        AntelopeContext.setContext(new AntelopeContext(request, antelopeResponse));
-        try {
-            //4.请求uri
-            String uri = request.getUrl();
-            //5.构建请求解码器
-            QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri);
-            //6.获取配置的系统参数
-            checkAndGet(uri, queryStringDecoder);
-            //7.获取action
-            Class<?> actionClass = routeAction(queryStringDecoder);
-            //8.获取parameter
-            Param param = buildParam(queryStringDecoder);
-            //9.获取拦截器
-            interceptorBefore(interceptors, param);
-            //10.执行方法调用
+        //1.1过滤请求
+        boolean filterRequest = filterRequest(request, ctx);
 
-            WorkAction action = (WorkAction) actionClass.newInstance();
-            action.execute(AntelopeContext.getContext(), param);
-            //11.执行后置拦截器
-            interceptorAfter(interceptors, param);
-        } finally {
-            responseContent(ctx, AntelopeContext.getResponse().getHttpContent());
-            AntelopeContext.removeContext();
+        if (filterRequest) {
+            //2.初始化响应体
+            AntelopeResponse antelopeResponse = AntelopeHttpResponse.initResponse();
+
+            //3.请求上下文
+            AntelopeContext.setContext(new AntelopeContext(request, antelopeResponse));
+            try {
+                //4.请求uri
+                String uri = request.getUrl();
+                //5.构建请求解码器
+                QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri);
+                //6.获取配置的系统参数
+                checkAndGet(uri, queryStringDecoder);
+                //7.获取action
+                Class<?> actionClass = routeAction(queryStringDecoder);
+                //8.获取parameter
+                Param param = buildParam(queryStringDecoder);
+                //9.获取拦截器
+                interceptorBefore(interceptors, param);
+                //10.执行方法调用
+
+                WorkAction action = (WorkAction) actionClass.newInstance();
+                action.execute(AntelopeContext.getContext(), param);
+                //11.执行后置拦截器
+                interceptorAfter(interceptors, param);
+            } finally {
+                if (AntelopeContext.getResponse().getHttpContent() != null) {
+                    responseContent(ctx, AntelopeContext.getResponse().getHttpContent());
+                    AntelopeContext.removeContext();
+                }
+            }
         }
 
+
+    }
+
+    /**
+     * 请求过滤
+     *
+     * @param request
+     * @param ctx
+     */
+    private boolean filterRequest(AntelopeRequest request, ChannelHandlerContext ctx) {
+        if (request.getUrl().equals("/favicon.ico")) {
+            return false;
+        }
+        return true;
     }
 
     /**

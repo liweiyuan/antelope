@@ -2,7 +2,7 @@ package com.learn.netty.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.DefaultHttpRequest;
+import io.netty.handler.codec.http.LastHttpContent;
 
 /**
  * @Author :lwy
@@ -13,10 +13,10 @@ public class OtherMessageHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (!(msg instanceof DefaultHttpRequest)) {
-            System.out.println("msg:" + msg);
-            ctx.channel().close();
+        if(msg instanceof LastHttpContent){
+            System.err.println(msg);
         }
+        //System.out.println(msg);
         super.channelRead(ctx, msg);
     }
 }
