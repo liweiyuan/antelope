@@ -5,6 +5,8 @@ import com.learn.netty.action.req.AntelopeRequest;
 import com.learn.netty.action.res.AntelopeHttpResponse;
 import com.learn.netty.action.res.AntelopeResponse;
 import com.learn.netty.config.AppConfig;
+import com.learn.netty.enums.StatusType;
+import com.learn.netty.exception.AntelopeException;
 import com.learn.netty.util.PathUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -55,7 +57,7 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
 
         AppConfig config=AppConfig.newInstance();
         if(!PathUtil.getRootPath(queryStringDecoder.path()).equals(config.getRootPath())){
-            return null;
+            throw new AntelopeException(StatusType.REQUEST_ERROR,uri);
         }
         return config;
     }
