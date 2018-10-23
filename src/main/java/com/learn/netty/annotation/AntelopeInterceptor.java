@@ -7,4 +7,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface AntelopeInterceptor {
     String value() default "" ;
+
+    //TODO 后续添加拦截器的输序执行
+    //int order() default 0;
 }

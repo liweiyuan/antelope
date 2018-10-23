@@ -186,7 +186,7 @@ public class ClassScanner {
      * @param
      * @return
      */
-    public static Map<String, Class<?>> getInteceptorMap(){
+    public static Map<String, Class<?>> getInterceptorMap(){
         return interceptorMap;
     }
 }

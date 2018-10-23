@@ -117,7 +117,7 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
     }
 
     private void interceptorAfter(List<AntelopeInterceptor> interceptors, Param param) {
-        Map<String, Class<?>> interceptorMap = ClassScanner.getInteceptorMap();
+        Map<String, Class<?>> interceptorMap = ClassScanner.getInterceptorMap();
         interceptorMap.forEach((key, clzz) -> {
             try {
                 AntelopeInterceptor interceptor = (AntelopeInterceptor) clzz.newInstance();
@@ -136,7 +136,7 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
      * @param param
      */
     private void interceptorBefore(List<AntelopeInterceptor> interceptors, Param param) {
-        Map<String, Class<?>> interceptorMap = ClassScanner.getInteceptorMap();
+        Map<String, Class<?>> interceptorMap = ClassScanner.getInterceptorMap();
         interceptorMap.forEach((key, clzz) -> {
             try {
                 AntelopeInterceptor interceptor = (AntelopeInterceptor) clzz.newInstance();
