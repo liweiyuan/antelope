@@ -12,7 +12,9 @@ import com.learn.netty.constant.AntelopeConstant;
 import com.learn.netty.context.AntelopeContext;
 import com.learn.netty.enums.StatusType;
 import com.learn.netty.exception.AntelopeException;
+import com.learn.netty.inteceptor.AbstractAntelopeInterceptorAdapter;
 import com.learn.netty.inteceptor.AntelopeInterceptor;
+import com.learn.netty.inteceptor.OrderComparator;
 import com.learn.netty.util.ClassScanner;
 import com.learn.netty.util.LoggerBuilder;
 import com.learn.netty.util.PathUtil;
@@ -25,9 +27,7 @@ import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author :lwy
@@ -45,7 +45,7 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
     protected void channelRead0(ChannelHandlerContext ctx, DefaultHttpRequest msg) throws Exception {
 
         //构造当前请求的拦截器缓存
-        List<AntelopeInterceptor> interceptors = new ArrayList<>();
+        List<AbstractAntelopeInterceptorAdapter> interceptors = new ArrayList<>();
 
         //1.请求处理
         AntelopeRequest request = AntelopeHttpRequest.initRequest(msg);
@@ -116,11 +116,11 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
         ctx.writeAndFlush(response);
     }
 
-    private void interceptorAfter(List<AntelopeInterceptor> interceptors, Param param) {
-        Map<String, Class<?>> interceptorMap = ClassScanner.getInterceptorMap();
+    private void interceptorAfter(List<AbstractAntelopeInterceptorAdapter> interceptors, Param param) {
+        Map<HashMap<String, Integer>, Class<?>> interceptorMap = ClassScanner.getInterceptorMap();
         interceptorMap.forEach((key, clzz) -> {
             try {
-                AntelopeInterceptor interceptor = (AntelopeInterceptor) clzz.newInstance();
+                AbstractAntelopeInterceptorAdapter interceptor = (AbstractAntelopeInterceptorAdapter) clzz.newInstance();
                 interceptor.after(param);
                 interceptors.add(interceptor);
             } catch (InstantiationException | IllegalAccessException e) {
@@ -135,13 +135,23 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
      * @param interceptors
      * @param param
      */
-    private void interceptorBefore(List<AntelopeInterceptor> interceptors, Param param) {
-        Map<String, Class<?>> interceptorMap = ClassScanner.getInterceptorMap();
+    private void interceptorBefore(List<AbstractAntelopeInterceptorAdapter> interceptors, Param param) {
+        Map<HashMap<String, Integer>, Class<?>> interceptorMap = ClassScanner.getInterceptorMap();
+
+
         interceptorMap.forEach((key, clzz) -> {
+            Iterator<Map.Entry<String, Integer>> iterator = key.entrySet().iterator();
+            int order = 0;
+            if (iterator.hasNext()) {
+                order = iterator.next().getValue();
+            }
             try {
-                AntelopeInterceptor interceptor = (AntelopeInterceptor) clzz.newInstance();
-                interceptor.before(param);
-                interceptors.add(interceptor);
+                AbstractAntelopeInterceptorAdapter antelopeInterceptor = (AbstractAntelopeInterceptorAdapter) clzz.newInstance();
+                antelopeInterceptor.before(param);
+                antelopeInterceptor.setOrder(order);
+                interceptors.add(antelopeInterceptor);
+                //排序
+                interceptors.sort(new OrderComparator());
             } catch (InstantiationException | IllegalAccessException e) {
                 logger.error("illegal interceptor ", e);
             }

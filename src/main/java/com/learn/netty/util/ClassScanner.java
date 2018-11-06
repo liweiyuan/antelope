@@ -34,7 +34,7 @@ public class ClassScanner {
     private static Map<String, Class<?>> actionMap = null;
 
     //拦截器
-    private static Map<String, Class<?>> interceptorMap = null;
+    private static Map<HashMap<String,Integer>, Class<?>> interceptorMap = null;
 
     /**
      * 扫描跟包class
@@ -164,7 +164,9 @@ public class ClassScanner {
                     }
                     if (annotation instanceof AntelopeInterceptor) {
                         AntelopeInterceptor antelopeInterceptor = (AntelopeInterceptor) annotation;
-                        interceptorMap.put(antelopeInterceptor.value(), scanClass);
+                        HashMap<String,Integer> hashMap=new HashMap<>();
+                        hashMap.put(antelopeInterceptor.value(),antelopeInterceptor.order());
+                        interceptorMap.put(hashMap, scanClass);
                     }
                 }
             }
@@ -186,7 +188,7 @@ public class ClassScanner {
      * @param
      * @return
      */
-    public static Map<String, Class<?>> getInterceptorMap(){
+    public static Map<HashMap<String,Integer>, Class<?>> getInterceptorMap(){
         return interceptorMap;
     }
 }

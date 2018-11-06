@@ -6,19 +6,19 @@ import com.learn.netty.inteceptor.AbstractAntelopeInterceptorAdapter;
 
 /**
  * @Author :lwy
- * @Date : 2018/10/16 18:03
+ * @Date : 2018/11/6 18:17
  * @Description :
  */
-@AntelopeInterceptor(order = 1,value = "test")
-public class AntelopeInteceptorTestCase extends AbstractAntelopeInterceptorAdapter {
+@AntelopeInterceptor(order = 3,value = "hello")
+public class ExampleInterceptor extends AbstractAntelopeInterceptorAdapter {
 
     @Override
     public void before(Param param) {
-        System.err.println("hello before  1");
+        System.out.println("3333333333333333333 before");
     }
 
     @Override
     public void after(Param param) {
-        System.err.println("hello after   1");
+        System.out.println("3333333333333333333 after");
     }
 }

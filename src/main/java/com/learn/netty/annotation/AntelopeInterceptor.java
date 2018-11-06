@@ -6,8 +6,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AntelopeInterceptor {
-    String value() default "" ;
+    int order() default 0 ;
 
-    //TODO 后续添加拦截器的输序执行
-    //int order() default 0;
+    String value() default "";
 }
