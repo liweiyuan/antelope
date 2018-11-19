@@ -93,10 +93,12 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
                 //11.执行后置拦截器
                 interceptorAfter(interceptors, param);
             } finally {
+
+                //bug 解决了threadLocal未释放的bug
                 if (AntelopeContext.getResponse().getHttpContent() != null) {
                     responseContent(ctx, AntelopeContext.getResponse().getHttpContent());
-                    AntelopeContext.removeContext();
                 }
+                AntelopeContext.removeContext();
             }
         }
 
