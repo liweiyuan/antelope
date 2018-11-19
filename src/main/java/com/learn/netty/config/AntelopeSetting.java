@@ -32,7 +32,7 @@ public class AntelopeSetting {
      * @param scanRootPath
      */
     public static void setting(Class<?> clzz, String scanRootPath) {
-        initializeConfig(clzz);
+        initializeConfig(clzz,scanRootPath);
         setAppConfig(scanRootPath);
     }
 
@@ -47,10 +47,11 @@ public class AntelopeSetting {
         if (scanRootPath == null) {
             throw new RuntimeException("No [cicada.root.path] exists ");
         }
+        AppConfig.newInstance().setRootPath(scanRootPath);
         if (port == null) {
             throw new RuntimeException("No [cicada.port] exists ");
         }
-        AppConfig.newInstance().setRootPath(scanRootPath);
+        AppConfig.newInstance().setRootPackageName(scanRootPath);
         AppConfig.newInstance().setPort(Integer.parseInt(port));
     }
 
@@ -58,12 +59,22 @@ public class AntelopeSetting {
      * 初始化系统参数
      *
      * @param clzz
+     * @param scanRootPath
      */
-    private static void initializeConfig(Class<?> clzz) {
+    private static void initializeConfig(Class<?> clzz, String scanRootPath) {
         //初始化开始时间
         ThreadLocalHolder.setLocalTime(System.currentTimeMillis());
         //设置扫描包路径
         AppConfig.newInstance().setRootPackageName(clzz.getPackage().getName());
+
+        //设置rootPath
+        ApplicationConfiguration applicationConfiguration = (ApplicationConfiguration) getConfiguration(ApplicationConfiguration.class);
+
+        if (scanRootPath == null) {
+            scanRootPath = applicationConfiguration.get(AntelopeConstant.ROOT_PATH);
+        }
+        AppConfig.newInstance().setRootPath(scanRootPath);
+
         //扫描Class
         List<Class<?>> configurations = ClassScanner.configurations(AppConfig.newInstance().getRootPackageName());
         //初始化基于注解的action与拦截器处理

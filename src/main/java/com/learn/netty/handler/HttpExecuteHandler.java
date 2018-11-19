@@ -15,6 +15,8 @@ import com.learn.netty.exception.AntelopeException;
 import com.learn.netty.inteceptor.AbstractAntelopeInterceptorAdapter;
 import com.learn.netty.inteceptor.AntelopeInterceptor;
 import com.learn.netty.inteceptor.OrderComparator;
+import com.learn.netty.route.RouteManager;
+import com.learn.netty.route.RouteProcess;
 import com.learn.netty.util.ClassScanner;
 import com.learn.netty.util.LoggerBuilder;
 import com.learn.netty.util.PathUtil;
@@ -26,6 +28,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -40,6 +43,8 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
     private static final Logger logger = LoggerBuilder.getLogger(HttpExecuteHandler.class);
 
     public static HttpExecuteHandler INSTANCE = new HttpExecuteHandler();
+
+    private static RouteProcess routeProcess = RouteProcess.newInstance();
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DefaultHttpRequest msg) throws Exception {
@@ -74,8 +79,17 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
                 interceptorBefore(interceptors, param);
                 //10.执行方法调用
 
-                WorkAction action = (WorkAction) actionClass.newInstance();
-                action.execute(AntelopeContext.getContext(), param);
+
+                Method method = RouteManager.getRouteMethod(queryStringDecoder);
+                if (method == null) {
+                    //兼容 1.0版本
+                    WorkAction action = (WorkAction) actionClass.newInstance();
+                    action.execute(AntelopeContext.getContext(), param);
+                } else {
+                    //v2.0
+                    routeProcess.invoke(method, queryStringDecoder);
+                }
+
                 //11.执行后置拦截器
                 interceptorAfter(interceptors, param);
             } finally {

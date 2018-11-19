@@ -2,6 +2,8 @@ package com.learn.netty.util;
 
 import com.learn.netty.annotation.AntelopeAction;
 import com.learn.netty.annotation.AntelopeInterceptor;
+import com.learn.netty.annotation.AntelopeRoute;
+import com.learn.netty.config.AppConfig;
 import com.learn.netty.configuration.AbstractAntelopeConfiguration;
 import com.learn.netty.configuration.ApplicationConfiguration;
 import org.slf4j.Logger;
@@ -9,6 +11,8 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -34,7 +38,10 @@ public class ClassScanner {
     private static Map<String, Class<?>> actionMap = null;
 
     //拦截器
-    private static Map<HashMap<String,Integer>, Class<?>> interceptorMap = null;
+    private static Map<HashMap<String, Integer>, Class<?>> interceptorMap = null;
+
+    //匹配路由规则
+    private static Map<String, Method> routeMap = null;
 
     /**
      * 扫描跟包class
@@ -153,6 +160,8 @@ public class ClassScanner {
         }
         actionMap = new HashMap<>(16);
         interceptorMap = new HashMap<>(16);
+        //2018年11月19日
+        routeMap = new HashMap<>(16);
         classes.forEach(scanClass -> {
             if (scanClass.getAnnotation(AntelopeAction.class) != null ||
                     scanClass.getAnnotation(AntelopeInterceptor.class) != null) {
@@ -161,11 +170,25 @@ public class ClassScanner {
                     if (annotation instanceof AntelopeAction) {
                         AntelopeAction antelopeAction = (AntelopeAction) annotation;
                         actionMap.put(antelopeAction.value(), scanClass);
+
+                        //扫描方法级别的注解
+                        Method[] methods = scanClass.getDeclaredMethods();
+                        for (Method method : methods) {
+                            if (method.getModifiers() != Modifier.PUBLIC) {
+                                continue;
+                            }
+                            AntelopeRoute route = method.getAnnotation(AntelopeRoute.class);
+                            if (route == null) {
+                                continue;
+                            }
+                            routeMap.put(AppConfig.newInstance().getRootPath() + antelopeAction.value() + "/" +
+                                    route.value(), method);
+                        }
                     }
                     if (annotation instanceof AntelopeInterceptor) {
                         AntelopeInterceptor antelopeInterceptor = (AntelopeInterceptor) annotation;
-                        HashMap<String,Integer> hashMap=new HashMap<>();
-                        hashMap.put(antelopeInterceptor.value(),antelopeInterceptor.order());
+                        HashMap<String, Integer> hashMap = new HashMap<>();
+                        hashMap.put(antelopeInterceptor.value(), antelopeInterceptor.order());
                         interceptorMap.put(hashMap, scanClass);
                     }
                 }
@@ -185,10 +208,20 @@ public class ClassScanner {
 
     /**
      * 获取拦截器
+     *
      * @param
      * @return
      */
-    public static Map<HashMap<String,Integer>, Class<?>> getInterceptorMap(){
+    public static Map<HashMap<String, Integer>, Class<?>> getInterceptorMap() {
         return interceptorMap;
+    }
+
+    /**
+     * 获取路由器
+     *
+     * @return
+     */
+    public static Map<String, Method> getRouteMap() {
+        return routeMap;
     }
 }
