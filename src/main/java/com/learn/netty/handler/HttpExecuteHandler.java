@@ -57,9 +57,9 @@ public class HttpExecuteHandler extends SimpleChannelInboundHandler<DefaultHttpR
             //2.初始化响应体
             AntelopeResponse antelopeResponse = AntelopeHttpResponse.initResponse();
 
-            //3.请求上下文
-            AntelopeContext.setContext(new AntelopeContext(request, antelopeResponse));
             try {
+                //3.请求上下文
+                AntelopeContext.setContext(new AntelopeContext(request, antelopeResponse));
                 //4.请求uri
                 String uri = request.getUrl();
                 //5.构建请求解码器
