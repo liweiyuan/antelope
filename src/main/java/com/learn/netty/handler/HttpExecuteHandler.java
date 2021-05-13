@@ -13,7 +13,6 @@ import com.learn.netty.context.AntelopeContext;
 import com.learn.netty.enums.StatusType;
 import com.learn.netty.exception.AntelopeException;
 import com.learn.netty.inteceptor.AbstractAntelopeInterceptorAdapter;
-import com.learn.netty.inteceptor.AntelopeInterceptor;
 import com.learn.netty.inteceptor.OrderComparator;
 import com.learn.netty.util.ClassScanner;
 import com.learn.netty.util.LoggerBuilder;
